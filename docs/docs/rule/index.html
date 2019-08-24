@@ -1,0 +1,232 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Rule · React Peg</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="Traditionally, a grammar is a list of rules and you must define the grammar explicitly. In React Peg, we only care about rules and you can treat it as UI components."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Rule · React Peg"/><meta property="og:type" content="website"/><meta property="og:url" content="https://mistlog.github.io/react-peg/"/><meta property="og:description" content="Traditionally, a grammar is a list of rules and you must define the grammar explicitly. In React Peg, we only care about rules and you can treat it as UI components."/><meta property="og:image" content="https://mistlog.github.io/react-peg/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://mistlog.github.io/react-peg/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/react-peg/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs2015.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/react-peg/js/scrollSpy.js"></script><link rel="stylesheet" href="/react-peg/css/main.css"/><script src="/react-peg/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/react-peg/"><h2 class="headerTitle">React Peg</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/react-peg/docs/getting-started" target="_self">Docs</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Main Concepts</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Installation</h3><ul class=""><li class="navListItem"><a class="navItem" href="/react-peg/docs/getting-started">Getting Started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Main Concepts</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/react-peg/docs/rule">Rule</a></li><li class="navListItem"><a class="navItem" href="/react-peg/docs/props">Props</a></li><li class="navListItem"><a class="navItem" href="/react-peg/docs/ast">AST Node</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Examples</h3><ul class=""><li class="navListItem"><a class="navItem" href="/react-peg/docs/calculator">Calculator</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Rule</h1></header><article><div><span><p>Traditionally, a grammar is a list of rules and you must define the grammar explicitly. In React Peg, we only care about rules and you can treat it as UI components.</p>
+<h2><a class="anchor" aria-hidden="true" id="render"></a><a href="#render" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Render</h2>
+<p>The result of rendering a rule is a plain object just like that in React, and this object describes what we want to parse against.</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Text</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{}, string&gt;{
+    render()
+    {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>abc<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span></span>
+        );
+    }
+
+    action(param: ActionParam)
+    {
+        <span class="hljs-keyword">return</span> param.global.text();
+    }
+}
+
+<span class="hljs-keyword">const</span> result = <span class="hljs-keyword">new</span> (<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Text</span>/&gt;</span></span>).rule({}).render();
+<span class="hljs-built_in">console</span>.log(result);
+</code></pre>
+<p>and the result will be:</p>
+<pre><code class="hljs css language-javascript">{ 
+    <span class="hljs-attr">props</span>: {}, 
+    <span class="hljs-attr">children</span>: [ <span class="hljs-string">'abc'</span> ], 
+    <span class="hljs-attr">tagName</span>: <span class="hljs-string">'text'</span> 
+}
+</code></pre>
+<p>In this example, <code>Text</code> means that we want to parse(match) literal string <code>&quot;abc&quot;</code>. As a rule can be reused, if we want to parse <code>abcabcabc</code>, we can generate the parser in this way:</p>
+<pre><code class="hljs css language-javascript">interface TextMoreActionParam extends ActionParam
+{
+    <span class="hljs-attr">texts</span>: <span class="hljs-built_in">Array</span>&lt;string&gt;;
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">TextMore</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{}, { <span class="hljs-attr">text</span>: string, <span class="hljs-attr">count</span>: number }&gt;{
+    render()
+    {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">repeat</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"+"</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"texts"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">Text</span> /&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">repeat</span>&gt;</span></span>
+        );
+    }
+
+    action(param: TextMoreActionParam)
+    {
+        <span class="hljs-keyword">const</span> { texts } = param;
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-attr">text</span>: texts[<span class="hljs-number">0</span>],
+            <span class="hljs-attr">count</span>: texts.length
+        }
+    }
+}
+
+<span class="hljs-keyword">const</span> parser = ReactPeg.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">TextMore</span>/&gt;</span></span>);
+<span class="hljs-keyword">const</span> ast =  parser.parse(<span class="hljs-string">`abcabcabc`</span>);
+<span class="hljs-built_in">console</span>.log(ast);
+</code></pre>
+<p>and you will get:</p>
+<pre><code class="hljs css language-javascript">{ 
+    <span class="hljs-attr">text</span>: <span class="hljs-string">'abc'</span>,
+    <span class="hljs-attr">count</span>: <span class="hljs-number">3</span> 
+}
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="action"></a><a href="#action" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Action</h2>
+<p>Action method is the place where you harvest, you may want to use <code>global.text()</code> to get the matched text, or more flexible you can get matched part via label.</p>
+<p>In this example, we put label <code>texts</code> in <code>repeat</code> built-in rule, and retrieve the result as an array of string in <code>param</code>. Then we count the text and return what we need from <code>action</code> method.</p>
+<h2><a class="anchor" aria-hidden="true" id="built-in-rules"></a><a href="#built-in-rules" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Built-In Rules</h2>
+<p>Built-In rules are the basic building blocks in React Peg, they are:</p>
+<ul>
+<li>text: matches literal string</li>
+<li>repeat: one or more(+), zero or more(*)</li>
+<li>list: play the role of &lt;div/&gt; in html and Fragment in React</li>
+<li>set: just like [a-zA-Z0-9]</li>
+<li>opt: optional(?)</li>
+<li>assert: assert exist/not exist, or failed</li>
+<li>or: matches a or b</li>
+</ul>
+<h3><a class="anchor" aria-hidden="true" id="text"></a><a href="#text" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>text</h3>
+<p>In previous example, you can log <code>parser.grammar</code> to find out what happens behind the scene:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-built_in">console</span>.log(parser.grammar);
+</code></pre>
+<p>The grammar under the hood:</p>
+<pre><code class="hljs css language-javascript">{
+    <span class="hljs-keyword">const</span> { actions } = options;
+    <span class="hljs-keyword">const</span> global = {
+        location,
+        text
+    };
+}
+
+
+TextMore = texts: ( Text )+ { <span class="hljs-keyword">return</span> actions.get(<span class="hljs-string">'TextMore'</span>)({texts, global}); }
+
+Text = <span class="hljs-string">'abc'</span> { <span class="hljs-keyword">return</span> actions.get(<span class="hljs-string">'Text'</span>)({global}); }
+</code></pre>
+<p>In fact, React Peg is not a parser generator, <a href="https://pegjs.org/documentation">PEG.js</a> is, what React Peg does is translating JSX to grammar text and injecting actions.</p>
+<p>The explanation of <code>text</code> adapted from PEG.js:</p>
+<blockquote>
+<p>Match exact literal string</p>
+</blockquote>
+<h3><a class="anchor" aria-hidden="true" id="repeat"></a><a href="#repeat" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>repeat</h3>
+<p>You must specify <code>type</code> in props to use <code>repeat</code> rule:</p>
+<blockquote>
+<p>&quot;*&quot;: Match zero or more repetitions of the expression</p>
+</blockquote>
+<blockquote>
+<p>&quot;+&quot;: Match one or more repetitions of the expression</p>
+</blockquote>
+<h3><a class="anchor" aria-hidden="true" id="list"></a><a href="#list" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>list</h3>
+<blockquote>
+<p>Match a sequence of expressions</p>
+</blockquote>
+<p>You can use it like &lt;div/&gt; to group a bunch of rules.</p>
+<h3><a class="anchor" aria-hidden="true" id="set"></a><a href="#set" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>set</h3>
+<blockquote>
+<p>Match one character from a set</p>
+</blockquote>
+<p>For example, you can render <code>Word</code> as:</p>
+<pre><code class="hljs css language-javascript">&lt;<span class="hljs-keyword">set</span>&gt;A-Za-z0-9_&lt;/<span class="hljs-keyword">set</span>&gt;
+</code></pre>
+<p>By the way, you can always log <code>parser.grammar</code> to inspect the grammar if you are in doubt about the rendered rule.</p>
+<h3><a class="anchor" aria-hidden="true" id="opt"></a><a href="#opt" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>opt</h3>
+<blockquote>
+<p>Try to match the expression. If the match succeeds, return match result, otherwise return null.</p>
+</blockquote>
+<h3><a class="anchor" aria-hidden="true" id="assert"></a><a href="#assert" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>assert</h3>
+<p>You must specify <code>type</code> in props to use <code>assert</code> rule:</p>
+<blockquote>
+<p>with: Try to match the expression. If the match succeeds, just return undefined and do not consume any input, otherwise consider the match failed.</p>
+</blockquote>
+<blockquote>
+<p>without: Try to match the expression. If the match does not succeed, just return undefined and do not consume any input, otherwise consider the match failed.</p>
+</blockquote>
+<p>For example:</p>
+<pre><code class="hljs css language-javascript">interface AssertTestActionParam extends ActionParam
+{
+    <span class="hljs-attr">result</span>: [string,<span class="hljs-literal">undefined</span>,string];
+}
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">AssertTest</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{}, {}&gt;{
+    render(){
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">list</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"result"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>a<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">assert</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"with"</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>c<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">assert</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>c<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">list</span>&gt;</span></span>
+        )
+    }
+
+    action(param: AssertTestActionParam)
+    {
+        <span class="hljs-keyword">return</span> param.result;
+    }
+}
+
+<span class="hljs-keyword">const</span> parser = ReactPeg.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">AssertTest</span>/&gt;</span></span>);
+<span class="hljs-keyword">const</span> ast =  parser.parse(<span class="hljs-string">`ac`</span>);
+<span class="hljs-built_in">console</span>.log(ast);
+</code></pre>
+<p>The result will be:</p>
+<pre><code class="hljs css language-javascript">[ <span class="hljs-string">'a'</span>, <span class="hljs-literal">undefined</span>, <span class="hljs-string">'c'</span> ]
+</code></pre>
+<p>If assert failed, ie. what follows 'a' isn't 'c', the match will fail and abort.</p>
+<p>Change 'c' to 'd' in <code>parser.parse('ac')</code> and have a try, you will get:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-built_in">SyntaxError</span>: Expected , or <span class="hljs-literal">undefined</span> but <span class="hljs-string">"a"</span> found.
+...etc
+</code></pre>
+<p>It seems like some kind of lookahead.</p>
+<h3><a class="anchor" aria-hidden="true" id="or"></a><a href="#or" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>or</h3>
+<blockquote>
+<p>Try to match the first expression, if it does not succeed, try the second one, etc.</p>
+</blockquote>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/react-peg/docs/getting-started"><span class="arrow-prev">← </span><span>Getting Started</span></a><a class="docs-next button" href="/react-peg/docs/props"><span>Props</span><span class="arrow-next"> →</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#render">Render</a></li><li><a href="#action">Action</a></li><li><a href="#built-in-rules">Built-In Rules</a><ul class="toc-headings"><li><a href="#text">text</a></li><li><a href="#repeat">repeat</a></li><li><a href="#list">list</a></li><li><a href="#set">set</a></li><li><a href="#opt">opt</a></li><li><a href="#assert">assert</a></li><li><a href="#or">or</a></li></ul></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/react-peg/" class="nav-home"></a><div><h5>More</h5><a href="https://github.com/mistlog/react-peg">GitHub</a></div></section><section class="copyright">Copyright © 2019 mistlog</section></footer></div></body></html>
