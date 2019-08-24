@@ -1,0 +1,311 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Calculator · React Peg</title><meta name="viewport" content="width=device-width"/><meta name="generator" content="Docusaurus"/><meta name="description" content="In this example, we will build a simple arithmetic calculator which takes input such as:"/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Calculator · React Peg"/><meta property="og:type" content="website"/><meta property="og:url" content="https://mistlog.github.io/react-peg/"/><meta property="og:description" content="In this example, we will build a simple arithmetic calculator which takes input such as:"/><meta property="og:image" content="https://mistlog.github.io/react-peg/img/undraw_online.svg"/><meta name="twitter:card" content="summary"/><meta name="twitter:image" content="https://mistlog.github.io/react-peg/img/undraw_tweetstorm.svg"/><link rel="shortcut icon" href="/react-peg/img/favicon.ico"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/vs2015.min.css"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/react-peg/js/scrollSpy.js"></script><link rel="stylesheet" href="/react-peg/css/main.css"/><script src="/react-peg/js/codetabs.js"></script></head><body class="sideNavVisible separateOnPageNav"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/react-peg/"><h2 class="headerTitle">React Peg</h2></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class="siteNavGroupActive"><a href="/react-peg/docs/getting-started" target="_self">Docs</a></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="docsNavContainer" id="docsNav"><nav class="toc"><div class="toggleNav"><section class="navWrapper wrapper"><div class="navBreadcrumb wrapper"><div class="navToggle" id="navToggler"><div class="hamburger-menu"><div class="line1"></div><div class="line2"></div><div class="line3"></div></div></div><h2><i>›</i><span>Examples</span></h2><div class="tocToggler" id="tocToggler"><i class="icon-toc"></i></div></div><div class="navGroups"><div class="navGroup"><h3 class="navGroupCategoryTitle">Installation</h3><ul class=""><li class="navListItem"><a class="navItem" href="/react-peg/docs/getting-started">Getting Started</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Main Concepts</h3><ul class=""><li class="navListItem"><a class="navItem" href="/react-peg/docs/rule">Rule</a></li><li class="navListItem"><a class="navItem" href="/react-peg/docs/props">Props</a></li><li class="navListItem"><a class="navItem" href="/react-peg/docs/ast">AST Node</a></li></ul></div><div class="navGroup"><h3 class="navGroupCategoryTitle">Examples</h3><ul class=""><li class="navListItem navListItemActive"><a class="navItem" href="/react-peg/docs/calculator">Calculator</a></li></ul></div></div></section></div><script>
+            var coll = document.getElementsByClassName('collapsible');
+            var checkActiveCategory = true;
+            for (var i = 0; i < coll.length; i++) {
+              var links = coll[i].nextElementSibling.getElementsByTagName('*');
+              if (checkActiveCategory){
+                for (var j = 0; j < links.length; j++) {
+                  if (links[j].classList.contains('navListItemActive')){
+                    coll[i].nextElementSibling.classList.toggle('hide');
+                    coll[i].childNodes[1].classList.toggle('rotate');
+                    checkActiveCategory = false;
+                    break;
+                  }
+                }
+              }
+
+              coll[i].addEventListener('click', function() {
+                var arrow = this.childNodes[1];
+                arrow.classList.toggle('rotate');
+                var content = this.nextElementSibling;
+                content.classList.toggle('hide');
+              });
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+              createToggler('#navToggler', '#docsNav', 'docsSliderActive');
+              createToggler('#tocToggler', 'body', 'tocActive');
+
+              var headings = document.querySelector('.toc-headings');
+              headings && headings.addEventListener('click', function(event) {
+                var el = event.target;
+                while(el !== headings){
+                  if (el.tagName === 'A') {
+                    document.body.classList.remove('tocActive');
+                    break;
+                  } else{
+                    el = el.parentNode;
+                  }
+                }
+              }, false);
+
+              function createToggler(togglerSelector, targetSelector, className) {
+                var toggler = document.querySelector(togglerSelector);
+                var target = document.querySelector(targetSelector);
+
+                if (!toggler) {
+                  return;
+                }
+
+                toggler.onclick = function(event) {
+                  event.preventDefault();
+
+                  target.classList.toggle(className);
+                };
+              }
+            });
+        </script></nav></div><div class="container mainContainer"><div class="wrapper"><div class="post"><header class="postHeader"><h1 class="postHeaderTitle">Calculator</h1></header><article><div><span><p>In this example, we will build a simple arithmetic calculator which takes input such as:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-number">1.5</span> + <span class="hljs-number">2</span> + <span class="hljs-number">3.4</span> * ( <span class="hljs-number">25</span> - <span class="hljs-number">4</span> ) / <span class="hljs-number">2</span> - <span class="hljs-number">8</span>
+</code></pre>
+<h2><a class="anchor" aria-hidden="true" id="step1-factor"></a><a href="#step1-factor" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step1: Factor</h2>
+<blockquote>
+<p>Factor = Expression or Number</p>
+</blockquote>
+<p>Factor can be expression or number, however, we will parse it as Number only in this step.</p>
+<p>Let's define Number rule:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Number</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{ label?: string }, number&gt;{
+
+    render()
+    {
+        <span class="hljs-keyword">const</span> digits = (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">repeat</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"+"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">set</span>&gt;</span>0-9<span class="hljs-tag">&lt;/<span class="hljs-name">set</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">repeat</span>&gt;</span></span>
+        );
+
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">list</span>&gt;</span>
+                {digits}
+                <span class="hljs-tag">&lt;<span class="hljs-name">opt</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>.<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                    {digits}
+                <span class="hljs-tag">&lt;/<span class="hljs-name">opt</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">list</span>&gt;</span></span>
+        );
+    }
+
+    action(param: ActionParam)
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-built_in">parseFloat</span>(param.global.text());
+    }
+
+}
+</code></pre>
+<p>then, Factor rule:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Factor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{ label?: string }, number&gt;{
+
+    render()
+    {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">list</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"factor"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">Number</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+             <span class="hljs-tag">&lt;/<span class="hljs-name">list</span>&gt;</span></span>
+        );
+    }
+
+    action(param: FactorActionParam)
+    {
+        <span class="hljs-keyword">const</span> { factor } = param;
+        <span class="hljs-keyword">const</span> [value] = factor.filter(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item !== <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">typeof</span> item !== <span class="hljs-string">"string"</span>) <span class="hljs-keyword">as</span> [number];
+        <span class="hljs-keyword">return</span> value;
+    }
+}
+</code></pre>
+<p>to ignore white spcae, we need to define:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">_</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{}, <span class="hljs-literal">null</span>&gt;{
+
+    render()
+    {
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">repeat</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"*"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">set</span>&gt;</span> \t\n\r<span class="hljs-tag">&lt;/<span class="hljs-name">set</span>&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">repeat</span>&gt;</span></span>
+        );
+    }
+
+    action(param: ActionParam)
+    {
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span>;
+    }
+}
+</code></pre>
+<p>then log the result:</p>
+<pre><code class="hljs css language-javascirpt"><span class="hljs-keyword">const</span> parser = ReactPeg.render(&lt;<span class="hljs-keyword">Factor</span> /&gt;);
+<span class="hljs-keyword">const</span> ast = parser.<span class="hljs-keyword">parse</span>(<span class="hljs-string">"12.34"</span>);
+console.<span class="hljs-built_in">log</span>(ast);
+</code></pre>
+<pre><code class="hljs css language-javascript"><span class="hljs-number">12.34</span>
+</code></pre>
+<p>type declaration is removed for readability, see complete program in this <a href="https://gist.github.com/mistlog/16edf6b8cd1e07d2ca8f78e2e0e17a4b">gist</a>.</p>
+<h2><a class="anchor" aria-hidden="true" id="step-2-term"></a><a href="#step-2-term" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step 2: Term</h2>
+<blockquote>
+<p>Term = Factor ( * or / Fcator) *</p>
+</blockquote>
+<p>Then, let's move on and define term:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Term</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{ label?: string }, TermNode&gt;{
+
+    render()
+    {
+        <span class="hljs-keyword">const</span> head = (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Factor</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"head"</span> /&gt;</span>
+        );
+
+        const tail = (
+            <span class="hljs-tag">&lt;<span class="hljs-name">repeat</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"tail"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"*"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">or</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>*<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>/<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">or</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">Factor</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">repeat</span>&gt;</span>
+        );
+
+        return (
+            <span class="hljs-tag">&lt;<span class="hljs-name">list</span>&gt;</span>
+                {head}
+                {tail}
+            <span class="hljs-tag">&lt;/<span class="hljs-name">list</span>&gt;</span>
+        );
+    }
+
+    action(param: TermActionParam)
+    {
+        const { head, tail } = param;
+
+        const value = this.prettifyTail(tail).reduce((prev: number, curr: [TermOpType, FactorNode]) =&gt;
+        {
+            const [op, factor] = curr;
+
+            if (op === "*") return prev * factor;
+            if (op === "/") return prev / factor;
+
+        }, head);
+
+        return value;
+    }
+
+    prettifyTail(tail: TermTailNode)
+    {
+        return tail.map(
+            item =&gt; item.filter(e =&gt; e !== null)
+        );
+    }
+}
+</span></code></pre>
+<p>Now, we can evaluate input such as <code>12.34 * 5</code>:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-keyword">const</span> parser = ReactPeg.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Term</span> /&gt;</span>);
+const ast = parser.parse("12.34 * 5");
+console.log(ast);
+</span></code></pre>
+<pre><code class="hljs css language-javascript"><span class="hljs-number">61.7</span>
+</code></pre>
+<p>see complete program in this step in <a href="https://gist.github.com/mistlog/fde75c85167870905f52c4d411eec783">gist</a>.</p>
+<h2><a class="anchor" aria-hidden="true" id="step3-expression"></a><a href="#step3-expression" aria-hidden="true" class="hash-link"><svg class="hash-link-icon" aria-hidden="true" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>Step3: Expression</h2>
+<blockquote>
+<p>Expression = Term ( + or - Term) *</p>
+</blockquote>
+<p>Then, the final piece of our simple calculator:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Expression</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{}, ExpressionNode&gt;{
+
+    render()
+    {
+        <span class="hljs-keyword">const</span> head = (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Term</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"head"</span> /&gt;</span>
+        );
+
+        const tail = (
+            <span class="hljs-tag">&lt;<span class="hljs-name">repeat</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"tail"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"*"</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">or</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>+<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                    <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>-<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                <span class="hljs-tag">&lt;/<span class="hljs-name">or</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">Term</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">repeat</span>&gt;</span>
+        );
+
+        return (
+            <span class="hljs-tag">&lt;<span class="hljs-name">list</span>&gt;</span>
+                {head}
+                {tail}
+            <span class="hljs-tag">&lt;/<span class="hljs-name">list</span>&gt;</span>
+        );
+    }
+
+    action(param: ExpressionActionParam)
+    {
+        const { head, tail } = param;
+
+        const value = this.prettifyTail(tail).reduce((prev: number, curr: [ExpressionOpType, TermNode]) =&gt;
+        {
+            const [op, factor] = curr;
+
+            if (op === "+") return prev + factor;
+            if (op === "-") return prev - factor;
+
+        }, head);
+
+        return value;
+    }
+
+    prettifyTail(tail: ExpressionTailNode)
+    {
+        return tail.map(
+            item =&gt; item.filter(e =&gt; e !== null)
+        );
+    }
+}
+</span></code></pre>
+<p>don't forget to add Expression to the Factor rule:</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Factor</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">ReactPeg</span>.<span class="hljs-title">Rule</span>&lt;</span>{ label?: string }, FactorNode&gt;{
+
+    render()
+    {
+        <span class="hljs-keyword">const</span> number = (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">list</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">Number</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">list</span>&gt;</span></span>
+        );
+
+        <span class="hljs-keyword">const</span> expression = (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">list</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>(<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">Expression</span> /&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">text</span>&gt;</span>)<span class="hljs-tag">&lt;/<span class="hljs-name">text</span>&gt;</span>
+                <span class="hljs-tag">&lt;<span class="hljs-name">_</span> /&gt;</span>
+            <span class="hljs-tag">&lt;/<span class="hljs-name">list</span>&gt;</span></span>
+        );
+
+        <span class="hljs-keyword">return</span> (
+            <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">or</span> <span class="hljs-attr">label</span>=<span class="hljs-string">"factor"</span>&gt;</span>
+                {expression}
+                {number}
+            <span class="hljs-tag">&lt;/<span class="hljs-name">or</span>&gt;</span></span>
+        );
+    }
+
+    action(param: FactorActionParam)
+    {
+        <span class="hljs-keyword">const</span> { factor } = param;
+        <span class="hljs-keyword">const</span> [value] = factor.filter(<span class="hljs-function"><span class="hljs-params">item</span> =&gt;</span> item !== <span class="hljs-literal">null</span> &amp;&amp; <span class="hljs-keyword">typeof</span> item !== <span class="hljs-string">"string"</span>) <span class="hljs-keyword">as</span> [number];
+        <span class="hljs-keyword">return</span> value;
+    }
+} 
+</code></pre>
+<p>That's all!</p>
+<pre><code class="hljs css language-javascript"><span class="hljs-keyword">const</span> parser = ReactPeg.render(<span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">Expression</span> /&gt;</span>);
+const ast = parser.parse("1.5 + 2 + 3.4 * ( 25 - 4 ) / 2 - 8");
+console.log(ast);
+</span></code></pre>
+<pre><code class="hljs css language-javascript"><span class="hljs-number">31.199999999999996</span>
+</code></pre>
+<p>see complete program in this <a href="https://gist.github.com/mistlog/4cfdc0f3f913f797724f9744f020e7ab">gist</a>.</p>
+</span></div></article></div><div class="docs-prevnext"><a class="docs-prev button" href="/react-peg/docs/ast"><span class="arrow-prev">← </span><span>AST Node</span></a></div></div></div><nav class="onPageNav"><ul class="toc-headings"><li><a href="#step1-factor">Step1: Factor</a></li><li><a href="#step-2-term">Step 2: Term</a></li><li><a href="#step3-expression">Step3: Expression</a></li></ul></nav></div><footer class="nav-footer" id="footer"><section class="sitemap"><a href="/react-peg/" class="nav-home"></a><div><h5>More</h5><a href="https://github.com/mistlog/react-peg">GitHub</a></div></section><section class="copyright">Copyright © 2019 mistlog</section></footer></div></body></html>
