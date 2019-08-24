@@ -12,6 +12,7 @@
     "type": "git",
     "url": "https://github.com/mistlog/react-peg"
   },
+  "homepage": "https://mistlog.github.io/react-peg",
   "main": "build/index.js",
   "types": "build/index.d.ts",
   "files": [
