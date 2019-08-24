@@ -19,6 +19,7 @@
   ],
   "scripts": {
     "test": "jest --coverage",
+    "coveralls": "npm run test && cat ./coverage/lcov.info | coveralls",
     "build": "tsc",
     "pack": "npm run build && npm pack",
     "release": "npm run build && npm publish"
