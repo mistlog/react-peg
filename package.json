@@ -1,0 +1,39 @@
+{
+  "name": "react-peg",
+  "version": "0.0.2",
+  "description": "A react style parser generator, based on PEG.js",
+  "keywords": [
+    "react",
+    "peg",
+    "parser",
+    "parser generator"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mistlog/react-peg"
+  },
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "test": "jest --coverage",
+    "build": "tsc",
+    "pack": "npm run build && npm pack",
+    "release": "npm run build && npm publish"
+  },
+  "author": "mistlog",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^24.0.17",
+    "@types/pegjs": "^0.10.1",
+    "jest": "^24.8.0",
+    "ts-jest": "^24.0.2",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
+  },
+  "dependencies": {
+    "pegjs": "^0.10.0"
+  }
+}
