@@ -8,6 +8,10 @@ React Peg is a react style parser generator based on PEG.js.
 
 * Easy to Debug & Unit Test: Since rule is written in JavaScript instead of string, you can easily debug & test grammar and parser.
 
+## Playground
+
+https://mistlog.github.io/react-peg-playground/
+
 ## Documentation
 
 You can find the React Peg documentation [on the website](https://mistlog.github.io/react-peg/).
