@@ -16,14 +16,6 @@ https://mistlog.github.io/react-peg-playground/
 
 You can find the React Peg documentation [on the website](https://mistlog.github.io/react-peg/).
 
-Check out the [Getting Started](https://mistlog.github.io/react-peg/docs/getting-started) page for a quick overview.
-
-The documentation is divided into several sections:
-
-* [Installation](https://mistlog.github.io/react-peg/docs/getting-started)
-* [Main Concepts](https://mistlog.github.io/react-peg/docs/rule)
-* [Examples](https://mistlog.github.io/react-peg/docs/calculator)
-
 ## License
 
 React Peg is [MIT licensed](https://github.com/mistlog/react-peg/blob/master/LICENSE).
