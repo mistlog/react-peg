@@ -1,55 +1,46 @@
-import { ReactPeg, ActionParam } from "../index";
+import { ReactPeg } from "../index";
 
 export type DigitNode = string;
 
-export class Digit extends ReactPeg.Rule<{}, DigitNode>{
-
-    render()
-    {
-        return (
+export function Digit() {
+    return (
+        <pattern action={({ globalFunction }) => globalFunction.text()}>
             <set>0-9</set>
-        );
-    }
-
-    action(param: ActionParam)
-    {
-        return param.global.text();
-    }
-
+        </pattern>
+    );
 }
 
-test("renderer", () =>
-{
+
+test("renderer", () => {
     const parser = ReactPeg.render(<Digit />);
     const ast = parser.parse("1");
     expect(ast).toEqual("1");
 })
 
-test("renderer.cache-rule", () =>
-{
-    interface CacheTestActionParam extends ActionParam
-    {
-        result: Array<string>;
-    }
 
-    class CacheTest extends ReactPeg.Rule<{}>
-    {
-        render()
-        {
-            return (
-                <list label="result">
+test("renderer.parse", () => {
+    const parser = ReactPeg.render(<Digit />);
+    expect(() => {
+        parser.parse("a")
+    }).toThrow();
+})
+
+
+test("renderer.cache-rule", () => {
+
+    function CacheTest() {
+        return (
+            <pattern action={({ values }) => {
+                return values.join("");
+            }}>
+                <list label="values">
                     <Digit />
                     <Digit />
                 </list>
-            );
-        }
-
-        action(param: CacheTestActionParam)
-        {
-            const { result } = param;
-            return result.join("");
-        }
+            </pattern>
+        );
     }
+
     const parser = ReactPeg.render(<CacheTest />);
     const ast = parser.parse("12");
     expect(ast).toEqual("12");

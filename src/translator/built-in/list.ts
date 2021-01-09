@@ -1,18 +1,13 @@
 import { Translator } from "../common/base";
 import { Chunk } from "../../chunk/chunk";
-import { translatePattern } from "../common/pattern";
+import { translateChildren } from "../common/pattern";
 
-export class ListTranslator extends Translator
-{
-    translate(chunk: Chunk)
-    {
-        const pattern = (chunk.children as Array<Chunk>).map(child => translatePattern(child)).join(" ");
-        
-        if (chunk.props.label)
-        {
-            return `( ${pattern}) `;
+export class ListTranslator extends Translator {
+    translate(chunk: Chunk, actions: Map<string, Function>) {
+        const expression = translateChildren(chunk, actions).join(" ");
+        if (chunk.props.label) {
+            return `(${expression})`;
         }
-
-        return pattern;
+        return expression;
     }
 }

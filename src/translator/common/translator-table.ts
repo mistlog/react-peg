@@ -6,6 +6,7 @@ import { RepeatTranslator } from "../built-in/repeat";
 import { OptionalTranslator } from "../built-in/opt";
 import { AssertTranslator } from "../built-in/assert";
 import { SetTranslator } from "../built-in/set";
+import { PatternTranslator } from "../built-in/pattern";
 
 export const TranslatorTable =
 {
@@ -16,5 +17,6 @@ export const TranslatorTable =
     "opt": OptionalTranslator,
     "assert": AssertTranslator,
     "text": TextTranslator,
-    "or": OrTranslator
+    "or": OrTranslator,
+    "pattern": PatternTranslator
 }

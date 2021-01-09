@@ -1,92 +1,79 @@
 import { ReactPeg } from "../../index";
 import { RuleTranslator } from "./rule";
 
-test("translator.rule", () =>
-{
-    class Test extends ReactPeg.Rule<{}>
-    {
-        render()
-        {
-            return (
-                <text>abc</text>
-            );
-        }
-
-        action()
-        {
-            return {};
-        }
+test("translator.rule", () => {
+    function Test() {
+        return (
+            <text>abc</text>
+        )
     }
-
     const chunk = <Test />;
     const rule = new RuleTranslator().translate(chunk);
-    expect(rule).toEqual(`Test = 'abc' { return actions.get('Test')({global}); }`);
+    expect(rule).toEqual(`Test = 'abc'`);
 })
 
 
-test("translator.rule.label", () =>
-{
-    class Test extends ReactPeg.Rule<{}>
-    {
-        render()
-        {
-            return (
-                <repeat type="+" label="l">
-                    <or label="a">
-                        <text label="c">a</text>
-                        <text label="t">b</text>
-                    </or>
-                </repeat>
-            );
-        }
-
-        action()
-        {
-            return {};
-        }
+test("translator.rule.label", () => {
+    function Test() {
+        return (
+            <repeat type="+" label="l">
+                <or label="a">
+                    <text label="c">a</text>
+                    <text label="t">b</text>
+                </or>
+            </repeat>
+        );
     }
 
     const chunk = <Test />;
     const rule = new RuleTranslator().translate(chunk);
-    expect(rule).toEqual(`Test = l: ( a: ( c: 'a'/t: 'b' ) )+ { return actions.get('Test')({l, global}); }`);
+    expect(rule).toMatchSnapshot();
 })
 
-test("translator.rule.pattern", () =>
-{
+test("translator.rule.pattern", () => {
 
-    class Foo extends ReactPeg.Rule<{}>{
-        render()
-        {
-            return (
-                <text>hi</text>
-            );
-        }
-
-        action()
-        {
-            return {};
-        }
+    function Foo() {
+        return (
+            <text>hi</text>
+        );
     }
 
-    class Test extends ReactPeg.Rule<{}>
-    {
-        render()
-        {
-            return (
-                <list>
-                    <Foo />
-                </list>
-            );
-        }
-
-        action()
-        {
-            return {};
-        }
+    function Test() {
+        return (
+            <list>
+                <Foo />
+            </list>
+        );
     }
 
     const chunk = <Test />;
     const rule = new RuleTranslator().translate(chunk);
-    expect(rule).toEqual(`Test = Foo { return actions.get('Test')({global}); }`);
+    expect(rule).toEqual(`Test = Foo`);
 
+})
+
+interface ICharProps {
+    uppercase?: boolean
+}
+export function Char(props: ICharProps) {
+    const { uppercase = false } = props;
+
+    return (
+        <pattern action={({ globalFunction }) => globalFunction.text()}>
+            <set>{`${uppercase ? "a-z" : "A-Z"}`}</set>
+        </pattern>
+    )
+}
+
+test("translator.rule.props", () => {
+    {
+        const chunk = <Char />;
+        const rule = new RuleTranslator().translate(chunk);
+        expect(rule).toMatchSnapshot();
+    }
+    {
+        const chunk = <Char uppercase />;
+        const rule = new RuleTranslator().translate(chunk);
+        expect(rule).toMatchSnapshot();
+    }
 })

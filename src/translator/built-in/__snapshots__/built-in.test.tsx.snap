@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`translator.pattern 1`] = `
+"((a: 'a' { 
+        return actions.get(\\"action0\\")({a, globalFunction});
+    }) / (b: 'b' { 
+        return actions.get(\\"action1\\")({b, globalFunction});
+    }))"
+`;

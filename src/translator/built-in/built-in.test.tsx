@@ -1,73 +1,66 @@
 import { ReactPeg } from "../../index";
-import { translatePattern } from "../common/pattern";
+import { translate } from "../common/pattern";
 
-test("translator.text", () =>
-{
+test("translator.text", () => {
     const chunk = <text>abc</text>;
-    const pattern = translatePattern(chunk);
+    const pattern = translate(chunk);
     expect(pattern).toEqual(`'abc'`);
 })
 
-test("translator.or", () =>
-{
+test("translator.or", () => {
     const chunk = (
         <or>
             <text>a</text>
             <text>b</text>
         </or>
     );
-    const pattern = translatePattern(chunk);
-    expect(pattern).toEqual(`( 'a'/'b' )`);
+    const pattern = translate(chunk);
+    expect(pattern).toEqual(`('a' / 'b')`);
 })
 
-test("translator.list", () =>
-{
+test("translator.list", () => {
     const chunk = (
         <list>
             <text>a</text>
             <text>b</text>
         </list>
     );
-    const pattern = translatePattern(chunk);
+    const pattern = translate(chunk);
     expect(pattern).toEqual(`'a' 'b'`);
 })
 
-test("translator.repeat.zero-or-more", () =>
-{
+test("translator.repeat.zero-or-more", () => {
     const chunk = (
         <repeat type="*">
             <text>a</text>
         </repeat>
     );
 
-    const pattern = translatePattern(chunk);
-    expect(pattern).toEqual("( 'a' )*");
+    const pattern = translate(chunk);
+    expect(pattern).toEqual("('a')*");
 })
 
-test("translator.repeat.one-or-more", () =>
-{
+test("translator.repeat.one-or-more", () => {
     const chunk = (
         <repeat type="+">
             <text>a</text>
         </repeat>
     );
 
-    const pattern = translatePattern(chunk);
-    expect(pattern).toEqual("( 'a' )+");
+    const pattern = translate(chunk);
+    expect(pattern).toEqual("('a')+");
 });
 
-test("translator.set", () =>
-{
+test("translator.set", () => {
     const chunk = (
         <set>a-z0-9A-Z</set>
     );
 
-    const pattern = translatePattern(chunk);
+    const pattern = translate(chunk);
     expect(pattern).toEqual("[a-z0-9A-Z]");
 })
 
-test("translator.optional", () =>
-{
+test("translator.optional", () => {
     const chunk = (
         <list>
             <opt>
@@ -76,12 +69,11 @@ test("translator.optional", () =>
             <text>a</text>
         </list>
     );
-    const pattern = translatePattern(chunk);
-    expect(pattern).toEqual(`( 'a' )? 'a'`);
+    const pattern = translate(chunk);
+    expect(pattern).toEqual(`('a')? 'a'`);
 })
 
-test("translator.assert.with", () =>
-{
+test("translator.assert.with", () => {
     const chunk = (
         <list>
             <text>a</text>
@@ -91,12 +83,11 @@ test("translator.assert.with", () =>
             <text>cdab</text>
         </list>
     );
-    const pattern = translatePattern(chunk);
-    expect(pattern).toEqual(`'a' &( 'cd' ) 'cdab'`);
+    const pattern = translate(chunk);
+    expect(pattern).toEqual(`'a' &('cd') 'cdab'`);
 })
 
-test("translator.assert.without", () =>
-{
+test("translator.assert.without", () => {
     const chunk = (
         <list>
             <text>a</text>
@@ -106,13 +97,29 @@ test("translator.assert.without", () =>
             <text>cdab</text>
         </list>
     );
-    const pattern = translatePattern(chunk);
-    expect(pattern).toEqual(`'a' !( 'cd' ) 'cdab'`);
+    const pattern = translate(chunk);
+    expect(pattern).toEqual(`'a' !('cd') 'cdab'`);
 })
 
-test("translator.text.label", () =>
-{
+test("translator.text.label", () => {
     const chunk = <text label="t">abc</text>;
-    const pattern = translatePattern(chunk);
+    const pattern = translate(chunk);
     expect(pattern).toEqual(`t: 'abc'`);
+})
+
+
+test("translator.pattern", () => {
+    const chunk = (
+        <or>
+            <pattern action={({ a }) => a + "a"}>
+                <text label="a">a</text>
+            </pattern>
+            <pattern action={({ b }) => b + "b"}>
+                <text label="b">b</text>
+            </pattern>
+        </or>
+    );
+    const actions = new Map<string, Function>();
+    const pattern = translate(chunk, actions);
+    expect(pattern).toMatchSnapshot();
 })
