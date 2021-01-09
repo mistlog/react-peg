@@ -1,22 +1,20 @@
 import { Chunk, isChunk } from "../chunk/chunk";
 import { RuleTranslator } from "../translator/rule/rule";
-import { Rule } from "../rule/rule";
 import * as peg from "pegjs";
 
-class Renderer
-{
+class Renderer {
     initializer: string;
 
     start: Chunk;
     grammar: Map<string, string>;
-    rules: Map<string, Rule<{}>>;
+    rules: Map<string, Function>;
+    actions: Map<string, Function>;
 
-    constructor(chunk: Chunk)
-    {
+    constructor(chunk: Chunk) {
         this.initializer = `
             {
                 const { actions } = options;
-                const global = {
+                const globalFunction = {
                     location,
                     text
                 };
@@ -26,83 +24,63 @@ class Renderer
         this.start = chunk;
         this.grammar = new Map<string, string>();
         this.grammar.set("initializer", this.initializer);
-
-        this.rules = new Map<string, Rule<{}>>();
+        this.rules = new Map<string, Function>();
+        this.actions = new Map<string, Function>();
     }
 
-    render()
-    {
+    render() {
         this.collectRule(this.start);
         const grammar = [...this.grammar.values()].join("\n\n");
         return grammar;
     }
 
-    collectRule(chunk: Chunk)
-    {
-        if (!isChunk(chunk))
-        {
+    collectRule(chunk: Chunk) {
+        if (!isChunk(chunk)) {
             return;
         }
 
-        if (chunk.rule)
-        {
-            //
+        if (chunk.rule) {
             const translator = new RuleTranslator();
-            const rule = translator.translate(chunk);
+            const ruleStr = translator.translate(chunk, this.actions);
+            const { name, chunkOutput, rule } = translator.cache;
 
-            //
-            const { name, pattern_chunk, instance } = translator.cache;
-
-            if (this.rules.has(name))
-            {
+            if (this.rules.has(name)) {
                 return;
             }
-            
-            this.rules.set(name, instance);
-            this.grammar.set(name, rule);
 
-            this.collectRule(pattern_chunk);
+            this.rules.set(name, rule);
+            this.grammar.set(name, ruleStr);
+            this.collectRule(chunkOutput);
         }
 
-        chunk.children.forEach(child =>
-        {
+        chunk.children.forEach(child => {
             this.collectRule(child as Chunk);
         })
     }
 }
 
-class Parser
-{
+class Parser {
     parser: peg.Parser;
     renderer: Renderer;
-    actions: Map<string, Function>;
     grammar: string;
 
-    constructor(renderer: Renderer)
-    {
-        //
+    constructor(renderer: Renderer) {
         this.renderer = renderer;
-
-        //
         this.grammar = this.renderer.render();
         this.parser = peg.generate(this.grammar);
-        this.actions = new Map<string, Function>();
     }
 
-    parse(code: string)
-    {
-        this.renderer.rules.forEach((rule, name) =>
-        {
-            this.actions.set(name, rule.action.bind(rule));
-        });
-
-        const ast = this.parser.parse(code, { actions: this.actions });
-        return ast;
+    parse(code: string) {
+        try {
+            const ast = this.parser.parse(code, { actions: this.renderer.actions });
+            return ast;
+        } catch (error) {
+            throw { message: error.message, location: error.location, stack: error.stack };
+        }
     }
 }
 
-export function render(chunk: Chunk)
-{
+export function render(chunk: Chunk) {
     const renderer = new Renderer(chunk);
     const parser = new Parser(renderer);
     return parser;

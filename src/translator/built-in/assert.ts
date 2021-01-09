@@ -1,13 +1,12 @@
 import { Translator } from "../common/base";
 import { Chunk, AssertType } from "../../chunk/chunk";
-import { translatePattern } from "../common/pattern";
+import { translateChildren } from "../common/pattern";
 
-export class AssertTranslator extends Translator
-{
-    translate(chunk: Chunk)
-    {
-        const type = chunk.props.type as AssertType === "with" ? "&" : "!";
-        const pattern = `${type}( ${(chunk.children as Array<Chunk>).map(child => translatePattern(child)).join(" ")} )`;
+export class AssertTranslator extends Translator {
+    translate(chunk: Chunk, actions: Map<string, Function>) {
+        const assertType = chunk.props.type as AssertType === "with" ? "&" : "!";
+        const expression = translateChildren(chunk, actions).join(" ");
+        const pattern = `${assertType}(${expression})`;
         return pattern;
     }
 }

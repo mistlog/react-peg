@@ -1,0 +1,15 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`translator.rule.label 1`] = `"Test = l: (a: (c: 'a' / t: 'b'))+"`;
+
+exports[`translator.rule.props 1`] = `
+"Char = ([A-Z] { 
+        return actions.get(\\"action0\\")({globalFunction});
+    })"
+`;
+
+exports[`translator.rule.props 2`] = `
+"Char = ([a-z] { 
+        return actions.get(\\"action0\\")({globalFunction});
+    })"
+`;

@@ -1,41 +1,30 @@
-import { Rule } from "../rule/rule";
-
-interface RuleConstructor<Props={}>
-{
-    new(props: object): Rule<Props>
-}
 export type RepeatType = "*" | "+";
 export type AssertType = "with" | "without";
 
-export interface Chunk
-{
+export interface Chunk {
     //
     tagName?: string;
-    rule?: RuleConstructor;
+    rule?: Function;
 
     //
     props: { label?: string, type?: RepeatType | AssertType };
     children: object[];
 }
 
-export function createChunk(from: string | RuleConstructor, props: object, ...children: object[]): Chunk
-{
+export function createChunk(from: string | Function, props: object, ...children: object[]): Chunk {
     const chunk: Chunk = { props: props || {}, children };
 
-    if (typeof from === "string")
-    {
+    if (typeof from === "string") {
         chunk.tagName = from;
     }
-    else
-    {
+    else {
         chunk.rule = from;
     }
 
     return chunk;
 }
 
-export function isChunk(obj: object)
-{
+export function isChunk(obj: object) {
     return typeof obj !== "string" && "props" in obj && "children" in obj;
 }
 
