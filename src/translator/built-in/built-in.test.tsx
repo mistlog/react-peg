@@ -18,6 +18,18 @@ test("translator.or", () => {
     expect(pattern).toEqual(`('a' / 'b')`);
 })
 
+test("translator.or.array", () => {
+    const chunk = (
+        <or>
+            {["a", "b"].map(each => (
+                <text>{each}</text>
+            ))}
+        </or>
+    );
+    const pattern = translate(chunk);
+    expect(pattern).toEqual(`('a' / 'b')`);
+})
+
 test("translator.list", () => {
     const chunk = (
         <list>

@@ -3,6 +3,9 @@
         "jsx": "react",
         "jsxFactory": "ReactPeg.createChunk",
         "target": "es6",
+        "lib": [
+            "es2019"
+        ],
         "sourceMap": false,
         "outDir": "./build",
         "types": ["jest"],
