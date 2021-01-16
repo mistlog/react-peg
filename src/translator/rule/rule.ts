@@ -22,7 +22,7 @@ export class RuleTranslator extends Translator {
         this.cache.rule = chunkInput.rule;
 
         //
-        const rule = `${name} = ${pattern}`;
+        const rule = `${name} "${name}" = ${pattern}`;
         return rule;
     }
 }

@@ -9,7 +9,7 @@ test("translator.rule", () => {
     }
     const chunk = <Test />;
     const rule = new RuleTranslator().translate(chunk);
-    expect(rule).toEqual(`Test = 'abc'`);
+    expect(rule).toMatchSnapshot();
 })
 
 
@@ -48,7 +48,7 @@ test("translator.rule.pattern", () => {
 
     const chunk = <Test />;
     const rule = new RuleTranslator().translate(chunk);
-    expect(rule).toEqual(`Test = Foo`);
+    expect(rule).toMatchSnapshot();
 
 })
 

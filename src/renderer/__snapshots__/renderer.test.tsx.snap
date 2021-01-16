@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renderer.parse 1`] = `"Expected Digit but \\"a\\" found."`;

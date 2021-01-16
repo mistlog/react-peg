@@ -22,7 +22,7 @@ test("renderer.parse", () => {
     const parser = ReactPeg.render(<Digit />);
     expect(() => {
         parser.parse("a")
-    }).toThrow();
+    }).toThrowErrorMatchingSnapshot();
 })
 
 
