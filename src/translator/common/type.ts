@@ -8,6 +8,10 @@ export interface TextRule extends BuiltInRule {
     children?: string;
 }
 
+export interface AnyCharacterRule extends BuiltInRule {
+    
+}
+
 export interface OrRule extends BuiltInRule {
     children: Array<JSX.Element>;
 }

@@ -1,6 +1,6 @@
 import { createChunk, Chunk } from "./chunk/chunk";
 import { render } from "./renderer/renderer";
-import { TextRule, OrRule, ListRule, RepeatRule, SetRule, OptionalRule, AssertRule, PatternRule } from "./translator/common/type";
+import { TextRule, OrRule, ListRule, RepeatRule, SetRule, OptionalRule, AssertRule, PatternRule, AnyCharacterRule } from "./translator/common/type";
 
 export { ActionParam } from "./rule/rule";
 export { Chunk } from "./chunk/chunk";
@@ -38,6 +38,7 @@ declare global {
             opt: OptionalRule;
             assert: AssertRule;
             pattern: PatternRule;
+            any: AnyCharacterRule;
         }
     }
 }

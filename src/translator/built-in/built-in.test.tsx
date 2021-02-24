@@ -7,6 +7,12 @@ test("translator.text", () => {
     expect(pattern).toEqual(`'abc'`);
 })
 
+test("translator.any", () => {
+    const chunk = <any/>;
+    const pattern = translate(chunk);
+    expect(pattern).toEqual(`.`);
+})
+
 test("translator.or", () => {
     const chunk = (
         <or>
