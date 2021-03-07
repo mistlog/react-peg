@@ -1,6 +1,6 @@
 {
   "name": "react-peg",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A react style parser generator, based on PEG.js",
   "keywords": [
     "react",

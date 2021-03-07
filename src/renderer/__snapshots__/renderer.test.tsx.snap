@@ -1,3 +1,159 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renderer.parse 1`] = `"Expected Digit but \\"a\\" found."`;
+
+exports[`renderer: tracer 1`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 1,
+      "line": 1,
+      "offset": 0,
+    },
+    "start": Object {
+      "column": 1,
+      "line": 1,
+      "offset": 0,
+    },
+  },
+  "rule": "TracerTest",
+  "type": "rule.enter",
+}
+`;
+
+exports[`renderer: tracer 2`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 1,
+      "line": 1,
+      "offset": 0,
+    },
+    "start": Object {
+      "column": 1,
+      "line": 1,
+      "offset": 0,
+    },
+  },
+  "rule": "Digit",
+  "type": "rule.enter",
+}
+`;
+
+exports[`renderer: tracer 3`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 2,
+      "line": 1,
+      "offset": 1,
+    },
+    "start": Object {
+      "column": 1,
+      "line": 1,
+      "offset": 0,
+    },
+  },
+  "result": "1",
+  "rule": "Digit",
+  "type": "rule.match",
+}
+`;
+
+exports[`renderer: tracer 4`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 2,
+      "line": 1,
+      "offset": 1,
+    },
+    "start": Object {
+      "column": 2,
+      "line": 1,
+      "offset": 1,
+    },
+  },
+  "rule": "Digit",
+  "type": "rule.enter",
+}
+`;
+
+exports[`renderer: tracer 5`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 3,
+      "line": 1,
+      "offset": 2,
+    },
+    "start": Object {
+      "column": 2,
+      "line": 1,
+      "offset": 1,
+    },
+  },
+  "result": "2",
+  "rule": "Digit",
+  "type": "rule.match",
+}
+`;
+
+exports[`renderer: tracer 6`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 3,
+      "line": 1,
+      "offset": 2,
+    },
+    "start": Object {
+      "column": 3,
+      "line": 1,
+      "offset": 2,
+    },
+  },
+  "rule": "Digit",
+  "type": "rule.enter",
+}
+`;
+
+exports[`renderer: tracer 7`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 4,
+      "line": 1,
+      "offset": 3,
+    },
+    "start": Object {
+      "column": 3,
+      "line": 1,
+      "offset": 2,
+    },
+  },
+  "result": "3",
+  "rule": "Digit",
+  "type": "rule.match",
+}
+`;
+
+exports[`renderer: tracer 8`] = `
+Object {
+  "location": Object {
+    "end": Object {
+      "column": 4,
+      "line": 1,
+      "offset": 3,
+    },
+    "start": Object {
+      "column": 1,
+      "line": 1,
+      "offset": 0,
+    },
+  },
+  "result": "123",
+  "rule": "TracerTest",
+  "type": "rule.match",
+}
+`;

@@ -1,4 +1,5 @@
 import { ReactPeg } from "../index";
+import { ITracer } from "./renderer";
 
 export type DigitNode = string;
 
@@ -44,4 +45,29 @@ test("renderer.cache-rule", () => {
     const parser = ReactPeg.render(<CacheTest />);
     const ast = parser.parse("12");
     expect(ast).toEqual("12");
+})
+
+test("renderer: tracer", () => {
+    function TracerTest() {
+        return (
+            <pattern action={({ values }) => {
+                return values.join("");
+            }}>
+                <list label="values">
+                    <Digit />
+                    <Digit />
+                    <Digit />
+                </list>
+            </pattern>
+        );
+    }
+
+    const tracer: ITracer = {
+        trace: event => {
+            expect(event).toMatchSnapshot();
+        }
+    };
+    const parser = ReactPeg.render(<TracerTest />, { tracer });
+    const ast = parser.parse("123");
+    expect(ast).toEqual("123");
 })
