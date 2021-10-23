@@ -23,11 +23,12 @@ class Renderer {
     constructor(chunk: Chunk) {
         this.initializer = `
             {
-                const { actions } = options;
+                const { actions, context } = options;
                 const globalFunction = {
                     location,
                     text
                 };
+                const globalContext = context || {};
             }
         `;
 
@@ -80,9 +81,9 @@ class Parser {
         this.parser = peg.generate(this.grammar, { trace: Boolean(renderer.tracer) });
     }
 
-    parse(code: string) {
+    parse(code: string, context = {}) {
         try {
-            const options: peg.ParserOptions = { actions: this.renderer.actions };
+            const options: peg.ParserOptions = { actions: this.renderer.actions, context };
             if (this.renderer.tracer) {
                 /**
                  * Tracing with peg.js: https://gist.github.com/mistlog/3ac6fdf7de3e7af2da15b339b4bb5187
