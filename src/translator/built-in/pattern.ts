@@ -11,14 +11,14 @@ export class PatternTranslator extends Translator {
     }
 }
 
-function translateAction(action: Function, labels: Array<string>, actions: Map<string,Function>) {
+function translateAction(action: Function, labels: Array<string>, actions: Map<string, Function>) {
     const labels_param = labels.length === 0 ? "" : `${labels.join(", ")}, `;
 
     const key = `action${actions.size}`;
     actions.set(key, action);
 
     const actionStr = `{ 
-        return actions.get("${key}")({${labels_param}globalFunction});
+        return actions.get("${key}")({${labels_param}${["globalFunction", "globalContext"].join(",")}});
     }`;
     return actionStr;
 }

@@ -8,12 +8,12 @@ exports[`translator.rule.pattern 1`] = `"Test \\"Test\\" = Foo"`;
 
 exports[`translator.rule.props 1`] = `
 "Char \\"Char\\" = ([A-Z] { 
-        return actions.get(\\"action0\\")({globalFunction});
+        return actions.get(\\"action0\\")({globalFunction,globalContext});
     })"
 `;
 
 exports[`translator.rule.props 2`] = `
 "Char \\"Char\\" = ([a-z] { 
-        return actions.get(\\"action0\\")({globalFunction});
+        return actions.get(\\"action0\\")({globalFunction,globalContext});
     })"
 `;

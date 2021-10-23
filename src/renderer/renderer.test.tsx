@@ -71,3 +71,22 @@ test("renderer: tracer", () => {
     const ast = parser.parse("123");
     expect(ast).toEqual("123");
 })
+
+test("renderer.context", () => {
+
+    function ContextTest() {
+        return (
+            <pattern action={({ digit, globalContext }) => {
+                return globalContext.transform(digit);
+            }}>
+                <Digit label="digit" />
+            </pattern>
+        );
+    }
+
+    const parser = ReactPeg.render(<ContextTest />);
+    const ast = parser.parse("1", {
+        transform: (digit: string) => `digit value is ${digit}`
+    });
+    expect(ast).toEqual("digit value is 1");
+})

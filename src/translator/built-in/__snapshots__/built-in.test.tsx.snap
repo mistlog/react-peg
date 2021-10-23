@@ -2,8 +2,8 @@
 
 exports[`translator.pattern 1`] = `
 "((a: 'a' { 
-        return actions.get(\\"action0\\")({a, globalFunction});
+        return actions.get(\\"action0\\")({a, globalFunction,globalContext});
     }) / (b: 'b' { 
-        return actions.get(\\"action1\\")({b, globalFunction});
+        return actions.get(\\"action1\\")({b, globalFunction,globalContext});
     }))"
 `;
